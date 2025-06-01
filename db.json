@@ -1,5 +1,18 @@
 {
-  "users": [],
+  "users": [
+    {
+      "email": "son@gmail.com",
+      "password": "$2a$10$es7Epn2diY9KncnPh0SBlerWGrmoH6pldgh9cJlrGQ5.6kDuqm1z2",
+      "username": "truongcongsson",
+      "id": 1
+    },
+    {
+      "email": "haidang@gmail.com",
+      "password": "$2a$10$W7zQymg3PqZ9qev8LWo/fud4LcpxKjE9Qk7ziSCM/PV7K9TzTBTtO",
+      "username": "son",
+      "id": 2
+    }
+  ],
   "products": [],
   "orders": [],
   "categories": [],

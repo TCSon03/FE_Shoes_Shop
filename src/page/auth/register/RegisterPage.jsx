@@ -16,6 +16,7 @@ const RegisterPage = () => {
   } = useForm({ resolver: zodResolver(registerSchema) });
   const onSubmit = async (data) => {
     try {
+      delete data.confirmpassword
       const res = await registerApi(data);
       toast.success("Successfully: Register");
       reset();

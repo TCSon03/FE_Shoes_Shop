@@ -1,4 +1,4 @@
-import api from './index';
+import api from "./index";
 
-export const registerApi = (data) => api.post("/users", data);
-
+export const registerApi = (data) => api.post("/register", data);
+export const loginApi = (data) => api.post("/login", data);

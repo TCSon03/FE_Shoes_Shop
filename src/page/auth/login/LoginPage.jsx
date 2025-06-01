@@ -16,8 +16,6 @@ const LoginPage = () => {
   const onSubmit = async (dataLogin) => {
     try {
       const { data } = await loginApi(dataLogin);
-      console.log(data);
-      
       if (data.accessToken) {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("user", JSON.stringify(data.user));
@@ -34,7 +32,7 @@ const LoginPage = () => {
     <div className="container mx-auto min-h-screen flex flex-col justify-center items-center">
       <div className="text-center text-2xl mb-6">
         <h2 className="font-semibold mb-2">
-          Create <span className="text-[#FF954D]">Account</span>
+          Sign <span className="text-[#FF954D]">In</span>
         </h2>
         <div className="flex justify-center items-center mb-2 gap-3">
           <button

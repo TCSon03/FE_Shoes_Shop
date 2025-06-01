@@ -1,34 +1,32 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from "react";
 
 const HeaderAdminPage = () => {
   return (
-    <div>
-      <header>
-        <ul>
-          <li>
-            <Link to="/admin">Dashboard</Link>
-          </li>
-          <li>
-            <Link to="/admin/product">Product</Link>
-          </li>
-          <li>
-            <Link to="/admin/category">Category</Link>
-          </li>
-          <li>
-            <Link to="/admin/order">Order</Link>
-          </li>
-          <li>
-            <Link to="/admin/user">User</Link>
-          </li>
-          <li>
-            <Link to="/admin/setting">Setting</Link>
-          </li>
-          
-        </ul>
+    <>
+      <header className="px-6 py-4 border-b flex">
+        <div className="flex items-center gap-4 flex-1">
+          <button className="border px-4 py-3 rounded-xl">
+            <i className="ri-menu-2-fill"></i>
+          </button>
+          <div
+            className="border rounded-lg py-3 px-4 flex items-center gap-4 group
+                       focus-within:border-pink-500 focus-within:shadow-lg focus-within:shadow-pink-200 transition duration-200 ease-in-out w-[50%]"
+          >
+            <i
+              className="ri-search-2-line text-xl group
+                       focus-within:border-pink-500 transition duration-200 ease-in-out"
+            ></i>
+            <input
+              type="text"
+              placeholder="Search..."
+              className="focus:outline-none text-sm"
+            />
+          </div>
+        </div>
+        <div className="flex-1"></div>
       </header>
-    </div>
-  )
-}
+    </>
+  );
+};
 
-export default HeaderAdminPage
+export default HeaderAdminPage;

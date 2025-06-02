@@ -16,7 +16,7 @@ const useFetchProduct = () => {
   useEffect(() => {
     fetchProduct();
   }, []);
-  return [products]
+  return { products,  fetchProduct };
 };
 
 export default useFetchProduct;

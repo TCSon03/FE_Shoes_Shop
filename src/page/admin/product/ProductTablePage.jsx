@@ -1,9 +1,23 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import useFetchProduct from "../../../hooks/useFetchProduct";
+import { deleteProduct } from "../../../services/productApi";
+import { toast } from "react-toastify";
 
 const ProductTablePage = () => {
-  const [products] = useFetchProduct();
+  const { products, fetchProduct } = useFetchProduct();
+  const handleDelete = async (productId) => {
+    if (confirm("Ban co chac muon xoa?")) {
+      try {
+        await deleteProduct(productId);
+        toast.success("Delete Successfully");
+        fetchProduct();
+      } catch (error) {
+        console.log(error);
+        toast.error("Delete Failed");
+      }
+    }
+  };
   return (
     <>
       <div className="flex items-center justify-between mb-8">
@@ -63,17 +77,20 @@ const ProductTablePage = () => {
                     <td className="text-left px-6 py-5 text-sm font-medium text-gray-500">
                       ${item.price}
                     </td>
-                    <td className="text-left px-6 py-5 text-sm font-medium text-gray-500">
+                    <td className="text-left px-6 py-5 text-sm font-medium text-gray-500 truncate">
                       {item.short_description}
                     </td>
                     <td className="text-left px-6 py-5 text-sm font-medium text-gray-500 flex gap-4">
                       {" "}
-                      <button className="">
+                      <button
+                        className="focus:outline-none"
+                        onClick={() => handleDelete(item.id)}
+                      >
                         <i className="ri-delete-bin-6-line text-2xl text-red-300 hover:text-red-500 transion scale-105 duration-300"></i>
                       </button>
-                      <button>
+                      <Link to={`/admin/product/edit/${item.id}`}>
                         <i className="ri-edit-box-line text-2xl text-orange-300 hover:text-orange-500 transion scale-105 duration-300"></i>
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 ))}

@@ -1,29 +1,59 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import productSchema from "../../../validation/product/productSchema";
 import { toast } from "react-toastify";
-import { createProduct } from "../../../services/productApi";
-import { useNavigate } from "react-router-dom";
+import {
+  createProduct,
+  getDetailProduct,
+  updateProduct,
+} from "../../../services/productApi";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ProductFormPage = () => {
   const nav = useNavigate();
+  const { id } = useParams();
+  const isEditMode = !!id;
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm({ resolver: zodResolver(productSchema) });
+
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchProductData = async () => {
+        try {
+          const reponse = await getDetailProduct(id);
+          reset(reponse.data);
+          console.log(reponse.data);
+        } catch (error) {
+          console.log(error);
+          toast.error("Product Detail Failed!");
+        }
+      };
+      fetchProductData();
+    }
+  }, [id, isEditMode, reset]);
+
   const onSubmit = async (data) => {
     try {
-      const res = await createProduct(data);
+      let res;
+      if (isEditMode) {
+        res = await updateProduct(id, data);
+        toast.success("Update Product successfully");
+      } else {
+        res = await createProduct(data);
+        toast.success("Add Product successfully");
+      }
       console.log(res);
       reset();
-      toast.success("Add Product Successfully");
       nav("/admin/product");
     } catch (error) {
       console.log(error);
-      toast.error("Add Product Failed");
+      toast.error(isEditMode ? "Update Product Failed" : "Add Product Failed");
     }
   };
   return (
@@ -118,20 +148,7 @@ const ProductFormPage = () => {
               </span>
             )}
           </div>
-          {/* <div>
-            <label
-              htmlFor=""
-              className="block mb-1 font-medium text-sm text-gray-600"
-            >
-              Image:
-            </label>
-            <input
-              type="file"
-              placeholder="Enter Your Long Description"
-              className="border w-full rounded-md py-2 px-3 text-sm focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-300 transition"
-              {...register("image", { required: true })}
-            />
-          </div> */}
+
           <div className="flex justify-center items-center">
             <button
               className="bg-blue-400 w-full rounded-lg py-3 font-semibold text-white hover:bg-blue-500 hover:shadow-lg hover:scale-95 

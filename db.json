@@ -13,7 +13,29 @@
       "id": 2
     }
   ],
-  "products": [],
+  "products": [
+    {
+      "title": "san pham 2",
+      "price": 12,
+      "short_description": "mo ta ngăn",
+      "long_description": "mo ta dai",
+      "id": 1
+    },
+    {
+      "title": " san pham 3",
+      "price": 12,
+      "short_description": "mo ta san pham 3",
+      "long_description": "mo ta san pham 3",
+      "id": 2
+    },
+    {
+      "title": "san pham 4",
+      "price": 723,
+      "short_description": "mo ta san pham 4",
+      "long_description": "mo ta dai san pham 4",
+      "id": 3
+    }
+  ],
   "orders": [],
   "categories": [],
   "cart": []

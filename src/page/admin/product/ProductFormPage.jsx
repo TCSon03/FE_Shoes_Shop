@@ -4,8 +4,10 @@ import { useForm } from "react-hook-form";
 import productSchema from "../../../validation/product/productSchema";
 import { toast } from "react-toastify";
 import { createProduct } from "../../../services/productApi";
+import { useNavigate } from "react-router-dom";
 
 const ProductFormPage = () => {
+  const nav = useNavigate();
   const {
     register,
     handleSubmit,
@@ -18,6 +20,7 @@ const ProductFormPage = () => {
       console.log(res);
       reset();
       toast.success("Add Product Successfully");
+      nav("/admin/product");
     } catch (error) {
       console.log(error);
       toast.error("Add Product Failed");

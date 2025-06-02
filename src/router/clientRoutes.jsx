@@ -9,6 +9,7 @@ import CategoryPage from "./../page/client/cateogory/CategoryPage";
 import ProfilePage from "./../page/client/profile/ProfilePage";
 import OrderPage from "../page/client/profile/OrderPage";
 import OrderDetailPage from "../page/client/profile/OrderDetailPage";
+import CartPage from './../page/client/cart/CartPage';
 const clientRoutes = [
   // Common routes
   { index: true, element: <HomePage /> },
@@ -23,6 +24,9 @@ const clientRoutes = [
   { path: "/product", element: <ProductPage /> },
   { path: "/product/:id", element: <ProductDetailPage /> },
   { path: "/category", element: <CategoryPage /> },
+
+  // Cart routes
+  { path: "/cart", element: <CartPage /> },
 
   //   user routes
   { path: "/profile/me/:id", element: <ProfilePage /> },

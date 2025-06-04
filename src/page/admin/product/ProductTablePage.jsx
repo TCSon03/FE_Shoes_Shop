@@ -55,6 +55,9 @@ const ProductTablePage = () => {
                     Title
                   </th>
                   <th className="text-left px-6 py-3 text-xs text-gray-500">
+                    Image
+                  </th>
+                  <th className="text-left px-6 py-3 text-xs text-gray-500">
                     Price
                   </th>
                   <th className="text-left px-6 py-3 text-xs text-gray-500">
@@ -73,6 +76,9 @@ const ProductTablePage = () => {
                     </td>
                     <td className="text-left px-6 py-5 text-sm font-medium text-gray-700">
                       {item.title}
+                    </td>
+                    <td className="text-left px-6 py-5 text-sm font-medium text-gray-700">
+                      <img src={item.image_url} alt="" className="rounded-full w-12 h-12"/>
                     </td>
                     <td className="text-left px-6 py-5 text-sm font-medium text-gray-500">
                       ${item.price}

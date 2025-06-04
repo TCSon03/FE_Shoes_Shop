@@ -26,9 +26,9 @@ const ProductFormPage = () => {
     if (isEditMode) {
       const fetchProductData = async () => {
         try {
-          const reponse = await getDetailProduct(id);
-          reset(reponse.data);
-          console.log(reponse.data);
+          const response = await getDetailProduct(id);
+          reset(response.data);
+          console.log(response.data);
         } catch (error) {
           console.log(error);
           toast.error("Product Detail Failed!");
@@ -60,7 +60,7 @@ const ProductFormPage = () => {
     <>
       <div>
         <h4 className="text-xl font-semibold text-[1D2939] mb-8">
-          Form Product Add
+          {isEditMode ? "Form Product Update" : "Form Product Add"}
         </h4>
       </div>
       <form
@@ -149,6 +149,25 @@ const ProductFormPage = () => {
             )}
           </div>
 
+          <div>
+            <label
+              htmlFor=""
+              className="block mb-1 font-medium text-sm text-gray-600"
+            >
+              URL hình ảnh:
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Your URL Image"
+              className="border w-full rounded-md py-2 px-3 text-sm focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-300 transition"
+              {...register("image_url", { required: true })}
+            />
+            {errors?.image_url && (
+              <span className="text-orange-400 text-xs">
+                {errors?.image_url.message}
+              </span>
+            )}
+          </div>
           <div className="flex justify-center items-center">
             <button
               className="bg-blue-400 w-full rounded-lg py-3 font-semibold text-white hover:bg-blue-500 hover:shadow-lg hover:scale-95 

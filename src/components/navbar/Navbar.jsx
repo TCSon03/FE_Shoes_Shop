@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const [openDropdown, setOpenDropdown] = useState(false);
   return (
     <div className="w-80 border-r px-5">
       <Link to="/admin" className="flex items-center gap-3 py-8">
@@ -13,7 +14,7 @@ const Navbar = () => {
       <p className="text-xs text-gray-400 mb-4">MENU</p>
       <nav className="">
         <ul className="flex flex-col gap-1">
-          <li className="py-2 px-3 flex items-center justify-between cursor-pointer hover:bg-slate-100 rounded-xl group">
+          {/* <li className="py-2 px-3 flex items-center justify-between cursor-pointer hover:bg-slate-100 rounded-xl group">
             <div className="flex items-center gap-2">
               <i className="ri-dashboard-horizontal-line text-2xl text-gray-500 group-hover:scale-110 group-hover:text-blue-400 transition-all duration-300"></i>
               <Link
@@ -24,7 +25,49 @@ const Navbar = () => {
               </Link>
             </div>
             <i className="ri-arrow-right-s-line text-2xl text-gray-500 group-hover:text-blue-400 transition-all duration-300"></i>
+          </li> */}
+
+          <li className="py-2 px-3 flex flex-col cursor-pointer hover:bg-slate-100 rounded-xl group transition-all duration-300">
+            <div
+              onClick={() => setOpenDropdown(!openDropdown)}
+              className="flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <i className="ri-dashboard-horizontal-line text-2xl text-gray-500 group-hover:scale-110 group-hover:text-blue-400 transition-all duration-300"></i>
+                <span className="text-sm font-medium text-gray-700 group-hover:text-orange-400 transition-all duration-300">
+                  Dashboard
+                </span>
+              </div>
+              <i
+                className={`ri-arrow-${
+                  openDropdown ? "down" : "right"
+                }-s-line text-2xl text-gray-500 group-hover:text-blue-400 transition-all duration-300`}
+              ></i>
+            </div>
+
+            {/* Dropdown submenu */}
+            {openDropdown && (
+              <ul className="ml-8 mt-2 flex flex-col gap-1">
+                <li>
+                  <Link
+                    to="/admin/overview"
+                    className="text-sm text-gray-600 hover:text-blue-500 transition-all"
+                  >
+                    Tổng quan
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admin/stats"
+                    className="text-sm text-gray-600 hover:text-blue-500 transition-all"
+                  >
+                    Thống kê
+                  </Link>
+                </li>
+              </ul>
+            )}
           </li>
+
           <li className="py-2 px-3 flex items-center justify-between cursor-pointer hover:bg-slate-100 rounded-xl group">
             <div className="flex items-center gap-2">
               <i className="ri-product-hunt-line text-2xl text-gray-500 group-hover:scale-110 group-hover:text-blue-400 transition-all duration-300"></i>

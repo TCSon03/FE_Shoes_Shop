@@ -13,6 +13,11 @@ const productSchema = z.object({
     .max(500, "Short Description sản phẩm tối đa 500 kí tự!"),
 
   long_description: z.string().optional(),
+  image_url: z
+    .string()
+    .url("URL hình ảnh không hợp lệ.")
+    .optional()
+    .or(z.literal("")),
 });
 
 export default productSchema;

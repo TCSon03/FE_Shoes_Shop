@@ -26,7 +26,7 @@ const HeaderClientPage = () => {
           </div>
         </div>
       </div>
-      <header className="container mx-auto flex justify-between items-center py-4 border-b-[1px] border-gray-300">
+      <header className="container mx-auto flex justify-between items-center py-4 border-b-[1px] border-gray-300 mb-5">
         <ul className="flex items-center gap-8 flex-1 justify-start font-medium">
           <li>
             <Link

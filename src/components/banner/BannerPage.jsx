@@ -1,5 +1,5 @@
 import React from 'react';
-import BannerSlideshow from './BannerSlideshow'; // Điều chỉnh đường dẫn nếu cần
+import BannerSlideshow from './BannerSlideshow';
 
 const BannerPage = () => {
   return (

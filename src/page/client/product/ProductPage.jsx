@@ -1,9 +1,11 @@
-import React from 'react'
+import React from "react";
+import BannerShopPage from "../../../components/banner/BannerShopPage";
 
 const ProductPage = () => {
   return (
-    <div>ProductPage</div>
-  )
-}
-
-export default ProductPage
+    <div className="container mx-auto">
+      <BannerShopPage />
+    </div>
+  );
+};
+export default ProductPage;

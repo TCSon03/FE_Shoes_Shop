@@ -16,14 +16,18 @@ const RegisterPage = () => {
   } = useForm({ resolver: zodResolver(registerSchema) });
   const onSubmit = async (data) => {
     try {
-      delete data.confirmpassword
-      const res = await registerApi(data);
-      toast.success("Successfully: Register");
+      // tạo một đối tượng tránh làm thay đổi dữ liệu gốc
+      const dataToSend = { ...data };
+      delete data.confirmpassword;
+      const res = await registerApi(dataToSend);
+      toast.success("Successfully: Đăng kí tài khoản thành công");
       reset();
       nav("/login");
     } catch (error) {
-      console.log(error);
-      toast.error("Failed: Register");
+      console.error("Lỗi đăng ký:", error);
+      const errorMessage =
+        error.reponse?.data?.message || "Đăng ký thất bại. Vui lòng thử lại";
+      toast.error(errorMessage);
     }
   };
   return (
@@ -69,17 +73,17 @@ const RegisterPage = () => {
       >
         <div>
           <label htmlFor="" className="block mb-1 font-medium text-gray-600">
-            User Name <span className="text-red-600">*</span>
+            Full Name: <span className="text-red-600">*</span>
           </label>
           <input
             type="text"
             placeholder="Enter Your Name"
             className="border w-full rounded-md py-2 px-3 text-sm focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-300 transition"
-            {...register("username", { required: true })}
+            {...register("fullName", { required: true })}
           />
-          {errors?.username && (
+          {errors?.fullName && (
             <span className="text-orange-400 text-xs">
-              {errors?.username.message}
+              {errors?.fullName.message}
             </span>
           )}
         </div>
@@ -96,6 +100,22 @@ const RegisterPage = () => {
           {errors?.email && (
             <span className="text-orange-400 text-xs">
               {errors?.email.message}
+            </span>
+          )}
+        </div>
+        <div>
+          <label htmlFor="" className="block mb-1 font-medium text-gray-600">
+            Phone <span className="text-red-600">*</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Enter Your Phone"
+            className="border w-full rounded-md py-2 px-3 text-sm focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-300 transition"
+            {...register("phone", { required: true })}
+          />
+          {errors?.phone && (
+            <span className="text-orange-400 text-xs">
+              {errors?.phone.message}
             </span>
           )}
         </div>
@@ -142,7 +162,13 @@ const RegisterPage = () => {
         </div>
         <hr />
         <p className="text-sm">
-          Have an account? <Link to="/login" className="text-[#8470FF] font-semibold hover:text-purple-500 transition ease-in-out">Sign In</Link>
+          Have an account?{" "}
+          <Link
+            to="/login"
+            className="text-[#8470FF] font-semibold hover:text-purple-500 transition ease-in-out"
+          >
+            Sign In
+          </Link>
         </p>
       </form>
     </div>

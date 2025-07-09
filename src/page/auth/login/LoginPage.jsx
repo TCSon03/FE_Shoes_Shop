@@ -16,16 +16,18 @@ const LoginPage = () => {
   const onSubmit = async (dataLogin) => {
     try {
       const { data } = await loginApi(dataLogin);
-      if (data.accessToken) {
-        localStorage.setItem("accessToken", data.accessToken);
+      if (data.token) {
+        localStorage.setItem("accessToken", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         nav("/");
       }
       console.log(data);
-      toast.success("Login successfully!");
+      toast.success("Successfully: Đăng nhập thành công");
     } catch (error) {
-      console.log(error);
-      toast.error("Login failed");
+      console.error("Lỗi đăng nhập:", error);
+      const errorMessage =
+        error.reponse?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại";
+      toast.error(errorMessage);
     }
   };
   return (

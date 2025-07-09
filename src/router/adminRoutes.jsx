@@ -9,6 +9,8 @@ import BlogForm from "./../page/admin/blog/BlogForm";
 import OrderTable from "./../page/admin/order/OrderTable";
 import OrderForm from "../page/admin/order/OrderForm";
 import UserListPage from "../page/admin/user/UserListPage";
+import BrandTablePage from "../page/admin/brand/BrandTablePage";
+import BrandFormPage from "../page/admin/brand/BrandFormPage";
 
 const adminRoutes = [
   // Common routes
@@ -23,6 +25,10 @@ const adminRoutes = [
   { path: "/admin/category/add", element: <CategoryForm /> },
   { path: "/admin/category/edit/:id", element: <CategoryForm /> },
 
+  // Brand
+  { path: "/admin/brand", element: <BrandTablePage /> },
+  { path: "/admin/brand/add", element: <BrandFormPage /> },
+
   // Blog routes
   { path: "/admin/blog", element: <BlogTable /> },
   { path: "/admin/blog/add", element: <BlogForm /> },
@@ -36,4 +42,4 @@ const adminRoutes = [
   { path: "/admin/user", element: <UserListPage /> },
 ];
 
-export default adminRoutes
+export default adminRoutes;

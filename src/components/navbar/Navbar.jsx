@@ -80,6 +80,18 @@ const Navbar = () => {
             </div>
             <i className="ri-arrow-right-s-line text-2xl text-gray-500 group-hover:text-blue-400 transition-all duration-300"></i>
           </li>
+          <li className="py-2 px-3 flex items-center justify-between cursor-pointer hover:bg-slate-100 rounded-xl group">
+            <div className="flex items-center gap-2">
+              <i className="ri-product-hunt-line text-2xl text-gray-500 group-hover:scale-110 group-hover:text-blue-400 transition-all duration-300"></i>
+              <Link
+                to="/admin/brand"
+                className="text-sm font-medium text-gray-700 group-hover:text-orange-400 transition-all duration-300"
+              >
+                Brand
+              </Link>
+            </div>
+            <i className="ri-arrow-right-s-line text-2xl text-gray-500 group-hover:text-blue-400 transition-all duration-300"></i>
+          </li>
 
           <li className="py-2 px-3 flex items-center justify-between cursor-pointer hover:bg-slate-100 rounded-xl group">
             <div className="flex items-center gap-2">

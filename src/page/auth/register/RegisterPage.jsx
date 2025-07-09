@@ -26,7 +26,9 @@ const RegisterPage = () => {
     } catch (error) {
       console.error("Lỗi đăng ký:", error);
       const errorMessage =
-        error.reponse?.data?.message || "Đăng ký thất bại. Vui lòng thử lại";
+        error.response && error.response.data && error.response.data.message
+          ? error.response.data.message
+          : "Đăng ký thất bại. Vui lòng thử lại.";
       toast.error(errorMessage);
     }
   };

@@ -6,13 +6,20 @@ import RegisterPage from "./../page/auth/register/RegisterPage";
 import NotfoundPage from "../page/notfound/NotfoundPage";
 import LayoutAdminPage from "./../layout/admin/LayoutAdminPage";
 import adminRoutes from "./adminRoutes";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const router = createBrowserRouter([
   // Layout client
   { path: "/", element: <LayoutClientPage />, children: clientRoutes },
 
   // Layout admin
-  { path: "/admin", element: <LayoutAdminPage />, children: adminRoutes },
+  {
+    path: "/admin",
+    element: <ProtectedRoute />,
+    children: [
+      { path: "/admin", element: <LayoutAdminPage />, children: adminRoutes },
+    ],
+  },
 
   // Layout empty
   { path: "/login", element: <LoginPage /> },

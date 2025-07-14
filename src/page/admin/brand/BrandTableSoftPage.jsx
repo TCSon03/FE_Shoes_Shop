@@ -1,10 +1,10 @@
 import React from "react";
-import useFetchBrand from "../../../hooks/useFetchBrand";
+import useFetchSoftBrand from "../../../hooks/brand/useFetchSoftBrand";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { softDeleteBrand } from "../../../services/brandApi";
+import { hardDeleteBrand, restoreBrand } from "../../../services/brandApi";
 
-const BrandTablePage = () => {
+const BrandTableSoftPage = () => {
   const {
     brands,
     loading,
@@ -17,42 +17,67 @@ const BrandTablePage = () => {
     handlePageChange,
     handleLimitChange,
     handleSearchChange,
-  } = useFetchBrand();
+  } = useFetchSoftBrand();
 
   if (loading) {
-    return <div className="text-center p-4">Đang tải dữ liệu Brand...</div>;
+    return (
+      <div className="text-center p-4">
+        Đang tải dữ liệu Brand đã xóa mềm...
+      </div>
+    );
   }
-
   if (error) {
     return <div className="text-center p-4 text-red-500">Lỗi: {error}</div>;
   }
 
-  const handleSoftDeleteBrand = async (brand) => {
+  const handleRestoreBrand = async (id) => {
+    try {
+      const response = await restoreBrand(id);
+      if (response.data.success) {
+        toast.success(response.data.message || "Khôi phục Brand thành công!");
+        window.location.reload();
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Lỗi khi khôi phục Brand!";
+      toast.error(errorMessage);
+      console.error("Error restoring brand:", error);
+    }
+  };
+
+  const handleDeleteBrand = async (id) => {
     const confirmDelete = window.confirm(
-      `Bạn có chắc muốn xóa mềm brand "${brand.name}" không?`
+      "Bạn có chắc muốn xóa vĩnh viễn Brand này không?"
     );
     if (!confirmDelete) return;
-
     try {
-      await softDeleteBrand(brand._id);
-      toast.success("Đã xóa mềm thành công!");
-      window.location.reload();
+      const response = await hardDeleteBrand(id); // Gọi API xóa vĩnh viễn
+      if (response.data.success) {
+        toast.success(
+          response.data.message || "Xóa vĩnh viễn Brand thành công!"
+        );
+        window.location.reload();
+      }
     } catch (error) {
-      console.error("Lỗi xóa mềm brand:", error);
-      toast.error("Xóa mềm thất bại!");
+      const errorMessage =
+        error.response?.data?.message || "Lỗi khi xóa vĩnh viễn Brand!";
+      toast.error(errorMessage);
+      console.error("Lỗi xóa vĩnh viễn Brand:", error);
     }
   };
 
   return (
     <div className="container mx-auto p-4 font-sans">
       <div className="flex items-center justify-between mb-8">
-        <h4 className="text-xl font-semibold text-[1D2939]">Quản lý Brand</h4>
+        <h4 className="text-xl font-semibold text-[1D2939]">
+          Danh sách Brand đã xóa mềm
+        </h4>
         <Link
-          to="/admin/brand/add"
-          className="flex items-center gap-4 bg-purple-600 py-3 px-4 text-white font-medium rounded-xl hover:drop-shadow-xl hover:bg-purple-700 transition-all duration-300"
+          to="/admin/brand"
+          className="flex items-center gap-2 bg-gray-200 py-2 px-4 text-gray-700 font-medium rounded-xl hover:bg-gray-300 transition-all duration-300"
         >
-          <i className="ri-add-line font-semibold"></i>
-          <p>Thêm Brand</p>
+          <i className="ri-arrow-left-line font-semibold"></i>
+          <p>Quay lại danh sách Brand</p>
         </Link>
       </div>
 
@@ -60,7 +85,7 @@ const BrandTablePage = () => {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
         <input
           type="text"
-          placeholder="Tìm kiếm theo tên Brand..."
+          placeholder="Tìm kiếm theo tên Brand đã xóa..."
           value={search}
           onChange={(e) => handleSearchChange(e.target.value)}
           className="p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/2 md:w-1/3"
@@ -73,7 +98,7 @@ const BrandTablePage = () => {
             id="limit"
             value={limit}
             onChange={(e) => handleLimitChange(parseInt(e.target.value))}
-            className="border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className=" border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="5">5</option>
             <option value="10">10</option>
@@ -98,13 +123,10 @@ const BrandTablePage = () => {
                 Slug
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Hình ảnh
+                Ngày xóa
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Ngày tạo
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Hành Động
+                Hành động
               </th>
             </tr>
           </thead>
@@ -113,7 +135,7 @@ const BrandTablePage = () => {
               brands.map((brand, index) => (
                 <tr key={brand._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {index + 1}
+                    {(page - 1) * limit + index + 1}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                     {brand.name}
@@ -122,48 +144,23 @@ const BrandTablePage = () => {
                     {brand.slug}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {brand.logo ? (
-                      <img
-                        src={brand.logo}
-                        alt={brand.name}
-                        className="w-16 h-16 object-cover rounded-md"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src =
-                            "https://placehold.co/64x64/E0E0E0/A0A0A0?text=No+Image";
-                        }}
-                      />
-                    ) : (
-                      <img
-                        src="https://placehold.co/64x64/E0E0E0/A0A0A0?text=No+Image"
-                        alt="No Image"
-                        className="w-16 h-16 object-cover rounded-md"
-                      />
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {new Date(brand.createdAt).toLocaleDateString()}
+                    {new Date(brand.deletedAt).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 flex space-x-2">
-                    {/* <button
-                      title="Xem chi tiết"
-                      className="px-3 py-2 rounded-full text-blue-600 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
-                    >
-                      <i className="ri-eye-fill text-lg"></i>
-                    </button> */}
-                    <Link
-                      to={`/admin/brand/edit/${brand._id}`}
-                      title="Cập nhật"
-                      className="px-3 py-2 rounded-full b text-yellow-600 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
-                    >
-                      <i className="ri-loop-right-line text-lg"></i>
-                    </Link>
                     <button
-                      title="Xóa mềm"
-                      onClick={() => handleSoftDeleteBrand(brand)}
-                      className="px-3 py-2 rounded-full text-red-600 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      title="Khôi phục Brand"
+                      className="p-2 rounded-full bg-green-100 text-green-600 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      onClick={() => handleRestoreBrand(brand._id)}
                     >
-                      <i className="ri-stop-circle-line text-lg"></i>
+                      <i className="ri-refresh-line text-lg"></i>{" "}
+                    </button>
+                    <button
+                      title="Xóa vĩnh viễn"
+                      className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      onClick={() => handleDeleteBrand(brand._id)}
+                    >
+                      <i className="ri-delete-bin-line text-lg"></i>{" "}
+                      {/* Icon cho hard delete */}
                     </button>
                   </td>
                 </tr>
@@ -171,10 +168,10 @@ const BrandTablePage = () => {
             ) : (
               <tr>
                 <td
-                  colSpan="4"
+                  colSpan="5"
                   className="px-6 py-4 text-center text-sm text-gray-500"
                 >
-                  Không tìm thấy Brand nào.
+                  Không có Brand nào bị xóa mềm.
                 </td>
               </tr>
             )}
@@ -185,7 +182,7 @@ const BrandTablePage = () => {
       {/* Pagination controls */}
       <div className="flex flex-col sm:flex-row justify-between items-center mt-6 space-y-4 sm:space-y-0">
         <div className="text-gray-700 text-sm">
-          Hiển thị {brands.length} trên tổng số {totalItems} Brand
+          Hiển thị {brands.length} trên tổng số {totalItems} Brand đã xóa
         </div>
         <div className="flex items-center space-x-2">
           <button
@@ -211,4 +208,4 @@ const BrandTablePage = () => {
   );
 };
 
-export default BrandTablePage;
+export default BrandTableSoftPage;

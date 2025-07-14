@@ -4,8 +4,10 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import brandValidation from "../../../validation/brand/brandSchema";
 import { createBrand } from "../../../services/brandApi";
+import { useNavigate } from "react-router-dom";
 
 const BrandFormPage = () => {
+  const nav = useNavigate();
   const {
     register,
     handleSubmit,
@@ -17,13 +19,14 @@ const BrandFormPage = () => {
 
   const onSubmit = async (formData) => {
     console.log(formData);
-    
+
     try {
       const brand = await createBrand(formData);
       console.log(brand);
 
       toast.success("Tạo brand thành công 🎉");
       reset();
+      nav("/brand");
     } catch (error) {
       console.error(error);
       toast.error(
@@ -117,7 +120,7 @@ const BrandFormPage = () => {
           type="submit"
           className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
         >
-            Tạo Brand
+          Tạo Brand
         </button>
       </form>
     </div>

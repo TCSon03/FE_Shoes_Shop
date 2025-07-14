@@ -12,10 +12,6 @@ const brandValidation = z.object({
   description: z.string().optional(),
 
   slug: z.string().nonempty("Slug không được để trống"),
-
-  isActive: z.boolean().default(true),
-
-  position: z.number().default(0),
 });
 
 export default brandValidation;

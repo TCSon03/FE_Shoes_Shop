@@ -11,6 +11,8 @@ import OrderForm from "../page/admin/order/OrderForm";
 import UserListPage from "../page/admin/user/UserListPage";
 import BrandTablePage from "../page/admin/brand/BrandTablePage";
 import BrandFormPage from "../page/admin/brand/BrandFormPage";
+import BrandUpdatePage from "./../page/admin/brand/BrandUpdatePage";
+import BrandTableSoftPage from "../page/admin/brand/BrandTableSoftPage";
 
 const adminRoutes = [
   // Common routes
@@ -28,6 +30,8 @@ const adminRoutes = [
   // Brand
   { path: "/admin/brand", element: <BrandTablePage /> },
   { path: "/admin/brand/add", element: <BrandFormPage /> },
+  { path: "/admin/brand/edit/:id", element: <BrandUpdatePage /> },
+  { path: "/admin/brand/soft", element: <BrandTableSoftPage /> },
 
   // Blog routes
   { path: "/admin/blog", element: <BlogTable /> },

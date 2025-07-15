@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Import hooks từ react-router-dom
-import { getAllBrand } from "../services/brandApi";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getAllCate } from "../../services/categoryApi";
 
-const useFetchBrand = () => {
+export const useCategories = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Lấy các tham số từ URL khi khởi tạo state
   const queryParams = new URLSearchParams(location.search);
   const initialPage = parseInt(queryParams.get("page")) || 1;
   const initialLimit = parseInt(queryParams.get("limit")) || 5;
   const initialSearch = queryParams.get("search") || "";
 
-  const [brands, setBrands] = useState([]);
+  const [cates, setCates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(initialPage);
@@ -20,17 +21,19 @@ const useFetchBrand = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
-  const fetchBrands = async () => {
+  const fetchCates = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getAllBrand(page, limit, search);
-      setBrands(response.data.data);
+      const response = await getAllCate(page, limit, search);
+
+      setCates(response.data.data);
+
       setTotalItems(response.data.pagination.totalItems);
       setTotalPages(response.data.pagination.totalPages);
     } catch (err) {
-      console.error("Lỗi khi lấy danh sách Brand:", err);
-      setError("Không thể tải dữ liệu Brand.");
+      console.error("Lỗi khi lấy danh sách Cate:", err);
+      setError("Không thể tải dữ liệu Cate.");
     } finally {
       setLoading(false);
     }
@@ -42,19 +45,17 @@ const useFetchBrand = () => {
     const newLimit = parseInt(queryParams.get("limit")) || 5;
     const newSearch = queryParams.get("search") || "";
 
-    // Chỉ cập nhật state nếu có sự khác biệt để tránh loop vô hạn
     if (newPage !== page) setPage(newPage);
     if (newLimit !== limit) setLimit(newLimit);
     if (newSearch !== search) setSearch(newSearch);
 
-    // Gọi fetchBrands khi các tham số thay đổi
-    fetchBrands();
+    fetchCates();
   }, [location.search, page, limit, search]);
 
   const updateUrl = (newPage, newLimit, newSearch) => {
     const params = new URLSearchParams();
     if (newPage !== 1) params.set("page", newPage);
-    if (newLimit !== 5) params.set("limit", newLimit); // Chỉ thêm limit nếu khác giá trị mặc định
+    if (newLimit !== 5) params.set("limit", newLimit);
     if (newSearch) params.set("search", newSearch);
 
     navigate(`?${params.toString()}`, { replace: true });
@@ -67,15 +68,15 @@ const useFetchBrand = () => {
   };
 
   const handleLimitChange = (newLimit) => {
-    updateUrl(1, newLimit, search);
+    updateUrl(1, newLimit, search); // Reset về trang 1 khi thay đổi limit
   };
 
   const handleSearchChange = (newSearch) => {
-    updateUrl(1, limit, newSearch);
+    updateUrl(1, limit, newSearch); // Reset về trang 1 khi thay đổi search
   };
 
   return {
-    brands,
+    cates,
     loading,
     error,
     page,
@@ -86,8 +87,8 @@ const useFetchBrand = () => {
     handlePageChange,
     handleLimitChange,
     handleSearchChange,
-    fetchBrands,
+    fetchCates,
   };
 };
 
-export default useFetchBrand;
+export default useCategories;

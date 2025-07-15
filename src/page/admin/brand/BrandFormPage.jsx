@@ -22,8 +22,6 @@ const BrandFormPage = () => {
 
     try {
       const brand = await createBrand(formData);
-      console.log(brand);
-
       toast.success("Tạo brand thành công 🎉");
       reset();
       nav("/brand");

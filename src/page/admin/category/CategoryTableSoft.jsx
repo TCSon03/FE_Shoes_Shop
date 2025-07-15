@@ -1,45 +1,61 @@
+import React from "react";
+import useFetchSoftCate from "../../../hooks/category/useFetchSoftCate";
 import { Link } from "react-router-dom";
-import useCategories from "../../../hooks/category/useFetchCate";
-import CategoryForm from "./CategoryForm";
+import { hardDeleteCate, restoreCate } from "../../../services/categoryApi";
 import { toast } from "react-toastify";
-import { softDeleteCate } from "../../../services/categoryApi";
 
-const CategoryList = () => {
-  const {
-    cates,
-    loading,
-    error,
-    page,
-    limit,
-    search,
-    totalPages,
-    totalItems,
-    handlePageChange,
-    handleLimitChange,
-    handleSearchChange,
-  } = useCategories();
+const CategoryTableSoft = () => {
+  const { categories, loading, error } = useFetchSoftCate();
 
   if (loading) {
-    return <div className="text-center p-4">Đang tải dữ liệu cate...</div>;
+    return <p>Đang tải danh mục đã xóa mềm...</p>;
   }
 
   if (error) {
-    return <div className="text-center p-4 text-red-500">Lỗi: {error}</div>;
+    return (
+      <p style={{ color: "red" }}>
+        Lỗi khi tải danh mục: {error.message || "Có lỗi xảy ra!"}
+      </p>
+    );
   }
 
-  const handleSoftDeleteBrand = async (cate) => {
+  if (categories.length === 0) {
+    return <p>Không có danh mục nào bị xóa mềm.</p>;
+  }
+
+  const handleRestoreCate = async (id) => {
+    try {
+      const response = await restoreCate(id);
+      if (response.data.success) {
+        toast.success(response.data.message || "Khôi phục  thành công!");
+        window.location.reload();
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Lỗi khi khôi phục !";
+      toast.error(errorMessage);
+      console.error("Error restoring:", error);
+    }
+  };
+
+  const handleDeleteCate = async (id) => {
     const confirmDelete = window.confirm(
-      `Bạn có chắc muốn xóa mềm cate "${cate.name}" không?`
+      "Bạn có chắc muốn xóa vĩnh viễn không?"
     );
     if (!confirmDelete) return;
-
     try {
-      await softDeleteCate(cate._id);
-      toast.success("Đã xóa mềm thành công!");
-      window.location.reload();
+      const response = await hardDeleteCate(id);
+      console.log(response);
+
+      if (response.data.success) {
+        toast.success(response.data.message || "Xóa vĩnh thành công!");
+        window.location.reload();
+      }
     } catch (error) {
-      console.error("Lỗi xóa mềm cate:", error);
-      toast.error("Xóa mềm thất bại!");
+      const errorMessage =
+        error.response?.data?.message || "Lỗi khi xóa vĩnh viễn!";
+      toast.error(errorMessage);
+      console.error("Lỗi xóa vĩnh viễn:", error);
     }
   };
 
@@ -54,33 +70,6 @@ const CategoryList = () => {
           <i className="ri-add-line font-semibold"></i>
           <p>Thêm cate</p>
         </Link>
-      </div>
-
-      {/* Search and Limit controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
-        <input
-          type="text"
-          placeholder="Tìm kiếm theo tên cate..."
-          value={search}
-          onChange={(e) => handleSearchChange(e.target.value)}
-          className="p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/2 md:w-1/3"
-        />
-        <div className="flex items-center space-x-2">
-          <label htmlFor="limit" className="text-gray-700">
-            Hiển thị:
-          </label>
-          <select
-            id="limit"
-            value={limit}
-            onChange={(e) => handleLimitChange(parseInt(e.target.value))}
-            className="border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-          </select>
-        </div>
       </div>
 
       <div className="overflow-x-auto bg-white rounded-lg shadow-md mb-6">
@@ -108,8 +97,8 @@ const CategoryList = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {cates.length > 0 ? (
-              cates.map((cate, index) => (
+            {categories.length > 0 ? (
+              categories.map((cate, index) => (
                 <tr key={cate._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {index + 1}
@@ -150,16 +139,16 @@ const CategoryList = () => {
                     >
                       <i className="ri-eye-fill text-lg"></i>
                     </button> */}
-                    <Link
-                      to={`/admin/category/edit/${cate._id}`}
-                      title="Cập nhật"
-                      className="px-3 py-2 rounded-full b text-yellow-600 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                    <button
+                      title="Khôi phục"
+                      className="p-2 rounded-full bg-green-100 text-green-600 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                      onClick={() => handleRestoreCate(cate._id)}
                     >
                       <i className="ri-loop-right-line text-lg"></i>
-                    </Link>
+                    </button>
                     <button
                       title="Xóa mềm"
-                      onClick={() => handleSoftDeleteBrand(cate)}
+                      onClick={() => handleDeleteCate(cate._id)}
                       className="px-3 py-2 rounded-full text-red-600 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
                     >
                       <i className="ri-stop-circle-line text-lg"></i>
@@ -182,32 +171,8 @@ const CategoryList = () => {
       </div>
 
       {/* Pagination controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mt-6 space-y-4 sm:space-y-0">
-        <div className="text-gray-700 text-sm">
-          Hiển thị {cates.length} trên tổng số {totalItems} cate
-        </div>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => handlePageChange(page - 1)}
-            disabled={page === 1}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200"
-          >
-            Trang trước
-          </button>
-          <span className="text-gray-700 font-medium">
-            Trang {page} / {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(page + 1)}
-            disabled={page === totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition duration-200"
-          >
-            Trang tiếp
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
 
-export default CategoryList;
+export default CategoryTableSoft;

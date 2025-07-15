@@ -13,6 +13,8 @@ import BrandTablePage from "../page/admin/brand/BrandTablePage";
 import BrandFormPage from "../page/admin/brand/BrandFormPage";
 import BrandUpdatePage from "./../page/admin/brand/BrandUpdatePage";
 import BrandTableSoftPage from "../page/admin/brand/BrandTableSoftPage";
+import CategoryUpdate from "../page/admin/category/CategoryUpdate";
+import CategoryTableSoft from "../page/admin/category/CategoryTableSoft";
 
 const adminRoutes = [
   // Common routes
@@ -25,7 +27,8 @@ const adminRoutes = [
   { path: "/admin/product/edit/:id", element: <ProductFormPage /> },
   { path: "/admin/category", element: <CategoryTable /> },
   { path: "/admin/category/add", element: <CategoryForm /> },
-  { path: "/admin/category/edit/:id", element: <CategoryForm /> },
+  { path: "/admin/category/edit/:id", element: <CategoryUpdate /> },
+  { path: "/admin/category/soft", element: <CategoryTableSoft /> },
 
   // Brand
   { path: "/admin/brand", element: <BrandTablePage /> },

@@ -1,23 +1,25 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { createProductValidate } from "../../../validation/product/productSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { getAllCate } from "../../../services/categoryApi";
-import { getAllBrand } from "../../../services/brandApi";
-import { createProduct } from "../../../services/productApi";
+import { getDetailProduct, updateProduct } from "../../../services/productApi";
 import { toast } from "react-toastify";
+import { getAllBrand } from "../../../services/brandApi";
+import { getAllCate } from "../../../services/categoryApi";
 
-const ProductFormPage = () => {
+const ProductEditPage = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
     reset,
+    formState: { errors },
   } = useForm({
     resolver: zodResolver(createProductValidate),
   });
@@ -25,35 +27,56 @@ const ProductFormPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const productRes = await getDetailProduct(id);
+        reset(productRes.data.product);
+
         const [brandRes, categoryRes] = await Promise.all([
           getAllBrand(1, 1000),
           getAllCate(1, 1000),
         ]);
+
         setBrands(brandRes.data.data);
         setCategories(categoryRes.data.data);
-      } catch (err) {
-        console.error("Lỗi khi load brand/category", err);
+        setLoading(false);
+      } catch (error) {
+        console.error(
+          "Lỗi khi tải dữ liệu sản phẩm, thương hiệu hoặc danh mục:",
+          error
+        );
+        toast.error("Không thể tải dữ liệu. Vui lòng thử lại!");
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [id, reset]); // Thêm reset vào dependency array
 
   const onSubmit = async (data) => {
     try {
-      await createProduct(data);
-      toast.success("Tạo thành công 🎉");
-      reset();
+      await updateProduct(id, data);
+      toast.success("Cập nhật sản phẩm thành công! 🎉");
       navigate("/admin/product");
     } catch (error) {
-      console.error(error);
-      toast.error(error?.response?.data?.message || "Tạo thất bại. Thử lại!");
+      console.error("Lỗi khi cập nhật sản phẩm:", error);
+      toast.error(
+        error?.response?.data?.message ||
+          "Cập nhật sản phẩm thất bại. Vui lòng thử lại!"
+      );
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-lg text-gray-700">Đang tải dữ liệu sản phẩm...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto p-8 bg-white rounded-xl shadow-2xl">
       <h1 className="text-4xl font-extrabold text-gray-900 mb-10 text-center drop-shadow-sm">
-        Thêm Sản Phẩm Mới
+        Cập Nhật Sản Phẩm
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-7">
         {/* Name */}
@@ -151,13 +174,11 @@ const ProductFormPage = () => {
               className="block appearance-none w-full bg-white border border-gray-300 text-gray-900 py-2.5 px-4 pr-8 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out sm:text-base"
             >
               <option value="">-- Chọn thương hiệu --</option>
-              {/* Ensure 'brands' array is passed as props or defined in scope */}
-              {brands &&
-                brands.map((brand) => (
-                  <option key={brand._id} value={brand._id}>
-                    {brand.name}
-                  </option>
-                ))}
+              {brands.map((brand) => (
+                <option key={brand._id} value={brand._id}>
+                  {brand.name}
+                </option>
+              ))}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
               <svg
@@ -191,13 +212,11 @@ const ProductFormPage = () => {
               className="block appearance-none w-full bg-white border border-gray-300 text-gray-900 py-2.5 px-4 pr-8 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out sm:text-base"
             >
               <option value="">-- Chọn danh mục --</option>
-              {/* Ensure 'categories' array is passed as props or defined in scope */}
-              {categories &&
-                categories.map((cat) => (
-                  <option key={cat._id} value={cat._id}>
-                    {cat.name}
-                  </option>
-                ))}
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
               <svg
@@ -220,11 +239,11 @@ const ProductFormPage = () => {
           type="submit"
           className="w-full flex justify-center py-3.5 px-6 border border-transparent rounded-lg shadow-xl text-xl font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-3 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105"
         >
-          Tạo Sản Phẩm
+          Cập nhật Sản Phẩm
         </button>
       </form>
     </div>
   );
 };
 
-export default ProductFormPage;
+export default ProductEditPage;

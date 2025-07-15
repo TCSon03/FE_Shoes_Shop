@@ -1,23 +1,28 @@
 import { z } from "zod";
 
-const productSchema = z.object({
-  title: z
+export const createProductValidate = z.object({
+  name: z
     .string()
-    .min(6, "Title sản phẩm tối thiếu 6 kí tự!")
-    .max(255, "Title sản phẩm tối đa 6 kí tự!"),
-
-  price: z.number().min(1, "Price tối thiểu là 1!"),
-  short_description: z
+    .min(3, { message: "Product tối thiểu 3 kí tự" })
+    .max(100, { message: "Product tối đa 100 kí tự" })
+    .nonempty({ message: "Product không được để trống" }),
+    
+  thumbnail: z
     .string()
-    .min(3, "Short Description tối thiểu 3 kí tự!")
-    .max(500, "Short Description sản phẩm tối đa 500 kí tự!"),
-
-  long_description: z.string().optional(),
-  image_url: z
-    .string()
-    .url("URL hình ảnh không hợp lệ.")
-    .optional()
+    .url({ message: "Thumbnail phải là một đường dẫn hợp lệ" })
     .or(z.literal("")),
-});
 
-export default productSchema;
+  description: z.string().optional(),
+
+  slug: z
+    .string()
+    .nonempty({ message: "Slug không được để trống" }),
+
+  brandId: z
+    .string()
+    .nonempty({ message: "Brand là bắt buộc" }),
+
+  categoryId: z
+    .string()
+    .nonempty({ message: "Category là bắt buộc" }),
+});

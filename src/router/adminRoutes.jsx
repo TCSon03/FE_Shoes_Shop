@@ -15,6 +15,8 @@ import BrandUpdatePage from "./../page/admin/brand/BrandUpdatePage";
 import BrandTableSoftPage from "../page/admin/brand/BrandTableSoftPage";
 import CategoryUpdate from "../page/admin/category/CategoryUpdate";
 import CategoryTableSoft from "../page/admin/category/CategoryTableSoft";
+import ProductEditPage from "../page/admin/product/ProductEditPage";
+import ProductTableSoft from "../page/admin/product/ProductTableSoft";
 
 const adminRoutes = [
   // Common routes
@@ -24,7 +26,8 @@ const adminRoutes = [
   // Product and category routes
   { path: "/admin/product", element: <ProductTablePage /> },
   { path: "/admin/product/add", element: <ProductFormPage /> },
-  { path: "/admin/product/edit/:id", element: <ProductFormPage /> },
+  { path: "/admin/product/edit/:id", element: <ProductEditPage /> },
+  { path: "/admin/product/soft", element: <ProductTableSoft /> },
   { path: "/admin/category", element: <CategoryTable /> },
   { path: "/admin/category/add", element: <CategoryForm /> },
   { path: "/admin/category/edit/:id", element: <CategoryUpdate /> },

@@ -17,11 +17,16 @@ import CategoryUpdate from "../page/admin/category/CategoryUpdate";
 import CategoryTableSoft from "../page/admin/category/CategoryTableSoft";
 import ProductEditPage from "../page/admin/product/ProductEditPage";
 import ProductTableSoft from "../page/admin/product/ProductTableSoft";
+import VariantFormPage from "../page/admin/variant/VariantFormPage";
+import VariantTablePage from "../page/admin/variant/VariantTablePage";
+import VariantEditPage from "../page/admin/variant/VariantEditPage";
 
 const adminRoutes = [
   // Common routes
   { index: true, element: <DashboardPage /> },
-  { path: "/admin/setting", element: <SettingPage /> },
+  { path: "/admin/variant", element: <VariantTablePage /> },
+  { path: "/admin/variant/add", element: <VariantFormPage /> },
+  { path: "/admin/variant/edit/:id", element: <VariantEditPage /> },
 
   // Product and category routes
   { path: "/admin/product", element: <ProductTablePage /> },

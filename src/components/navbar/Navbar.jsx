@@ -132,10 +132,10 @@ const Navbar = () => {
             <div className="flex items-center gap-2">
               <i className="ri-settings-5-line text-2xl text-gray-500 group-hover:scale-110 group-hover:text-blue-400 transition-all duration-300"></i>
               <Link
-                to="/admin/setting"
+                to="/admin/variant"
                 className="text-sm font-medium text-gray-700 group-hover:text-orange-400 transition-all duration-300"
               >
-                Setting
+               Variant
               </Link>
             </div>
           </li>

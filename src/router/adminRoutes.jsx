@@ -30,7 +30,7 @@ const adminRoutes = [
 
   // Product and category routes
   { path: "/admin/product", element: <ProductTablePage /> },
-  { path: "/admin/product/add", element: <ProductFormPage /> },
+  { path: "/admin/product", element: <ProductTablePage /> },
   { path: "/admin/product/edit/:id", element: <ProductEditPage /> },
   { path: "/admin/product/soft", element: <ProductTableSoft /> },
   { path: "/admin/category", element: <CategoryTable /> },

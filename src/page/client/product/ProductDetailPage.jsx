@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getVariantById } from "../../../services/variantApi";
+import { toast } from "react-toastify";
+import { addItemToCart } from "../../../services/cartApi";
 
 const ProductDetailPage = () => {
   const { id } = useParams(); // Lấy ID biến thể từ URL
@@ -16,13 +18,16 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1); // Số lượng sản phẩm
   const [activeTab, setActiveTab] = useState("description"); // Tab đang hoạt động: 'description', 'returnPolicy', 'reviews'
 
+  // State để quản lý trạng thái loading riêng cho nút "Thêm vào giỏ"
+  const [addingToCart, setAddingToCart] = useState(false);
+
   useEffect(() => {
     const fetchProductDetail = async () => {
       try {
         setLoading(true);
         setError(null);
         // API call now returns { mainVariant, allRelatedVariants }
-        const response = await getVariantById(id);
+        const response = await getVariantById(id); 
 
         setMainVariantData(response.data.mainVariant); // Lưu biến thể chính
         setAllProductVariants(response.data.allRelatedVariants); // Lưu tất cả biến thể liên quan
@@ -78,6 +83,38 @@ const ProductDetailPage = () => {
     // Tùy chọn: nếu bạn muốn URL thay đổi theo biến thể được chọn
     // navigate(`/product-detail/${variantToSelect._id}`);
   };
+
+  // Hàm xử lý khi click "Thêm vào giỏ hàng"
+  const handleAddToCart = async () => {
+    if (!selectedVariant) {
+      toast.error("Vui lòng chọn một biến thể sản phẩm.");
+      return;
+    }
+    if (quantity <= 0) {
+      toast.error("Số lượng phải lớn hơn 0.");
+      return;
+    }
+    if (quantity > selectedVariant.stock) {
+      toast.error(`Số lượng yêu cầu vượt quá số lượng tồn kho (${selectedVariant.stock}).`);
+      return;
+    }
+
+    setAddingToCart(true); // Bắt đầu quá trình thêm vào giỏ hàng
+    try {
+      const response = await addItemToCart({
+        variantId: selectedVariant._id,
+        quantity: quantity,
+      });
+      toast.success(response.message || "Đã thêm sản phẩm vào giỏ hàng!");
+      // Có thể cập nhật UI giỏ hàng nhỏ (nếu có) hoặc chuyển hướng
+    } catch (err) {
+      console.error("Lỗi khi thêm vào giỏ hàng:", err);
+      toast.error(err.response?.data?.message || "Thêm vào giỏ hàng thất bại.");
+    } finally {
+      setAddingToCart(false); // Kết thúc quá trình thêm vào giỏ hàng
+    }
+  };
+
 
   if (loading) {
     return (
@@ -160,8 +197,8 @@ const ProductDetailPage = () => {
   // Hàm để copy mã khuyến mãi
   const copyToClipboard = (text) => {
     // Sử dụng document.execCommand('copy') cho tương thích iframe
-    document.execCommand("copy", false, text);
-    alert(`Đã sao chép mã: ${text}`);
+    document.execCommand('copy', false, text);
+    toast.info(`Đã sao chép mã: ${text}`); // Thay alert bằng toast
   };
 
   return (
@@ -203,33 +240,35 @@ const ProductDetailPage = () => {
               />
             )}
             {/* Các ảnh của Variant đang được chọn */}
-            {selectedVariant?.images && selectedVariant.images.length > 0
-              ? selectedVariant.images.map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    alt={`Variant Image ${index + 1}`}
-                    className={`w-20 h-20 object-cover rounded-md cursor-pointer border-2 ${
-                      selectedImage === image
-                        ? "border-blue-500"
-                        : "border-transparent"
-                    }`}
-                    onClick={() => setSelectedImage(image)}
-                  />
-                ))
-              : // Nếu không có ảnh biến thể, hiển thị ảnh thumbnail của sản phẩm nếu có
-                product?.thumbnail && (
-                  <img
-                    src={product.thumbnail}
-                    alt="Product Thumbnail"
-                    className={`w-20 h-20 object-cover rounded-md cursor-pointer border-2 ${
-                      selectedImage === product.thumbnail
-                        ? "border-blue-500"
-                        : "border-transparent"
-                    }`}
-                    onClick={() => setSelectedImage(product.thumbnail)}
-                  />
-                )}
+            {selectedVariant?.images && selectedVariant.images.length > 0 ? (
+              selectedVariant.images.map((image, index) => (
+                <img
+                  key={index}
+                  src={image}
+                  alt={`Variant Image ${index + 1}`}
+                  className={`w-20 h-20 object-cover rounded-md cursor-pointer border-2 ${
+                    selectedImage === image
+                      ? "border-blue-500"
+                      : "border-transparent"
+                  }`}
+                  onClick={() => setSelectedImage(image)}
+                />
+              ))
+            ) : (
+              // Nếu không có ảnh biến thể, hiển thị ảnh thumbnail của sản phẩm nếu có
+              product?.thumbnail && (
+                <img
+                  src={product.thumbnail}
+                  alt="Product Thumbnail"
+                  className={`w-20 h-20 object-cover rounded-md cursor-pointer border-2 ${
+                    selectedImage === product.thumbnail
+                      ? "border-blue-500"
+                      : "border-transparent"
+                  }`}
+                  onClick={() => setSelectedImage(product.thumbnail)}
+                />
+              )
+            )}
             {/* Nếu không có ảnh nào (cả thumbnail và variant images), hiển thị placeholder */}
             {!product?.thumbnail &&
               (!selectedVariant?.images ||
@@ -323,7 +362,7 @@ const ProductDetailPage = () => {
               <button
                 onClick={() => handleQuantityChange(-1)}
                 className="px-3 py-2 text-xl text-gray-600 hover:bg-gray-100 rounded-l-md disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={quantity <= 1 || !isInStock} // Disable nếu số lượng <= 1 hoặc hết hàng
+                disabled={quantity <= 1 || !isInStock || addingToCart} // Disable thêm khi đang thêm vào giỏ
               >
                 -
               </button>
@@ -333,20 +372,21 @@ const ProductDetailPage = () => {
               <button
                 onClick={() => handleQuantityChange(1)}
                 className="px-3 py-2 text-xl text-gray-600 hover:bg-gray-100 rounded-r-md disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={quantity >= selectedVariant?.stock || !isInStock} // Disable nếu đạt max quantity hoặc hết hàng
+                disabled={quantity >= selectedVariant?.stock || !isInStock || addingToCart} // Disable thêm khi đang thêm vào giỏ
               >
                 +
               </button>
             </div>
             <button
+              onClick={handleAddToCart} // Gắn hàm handleAddToCart vào nút
               className="flex-1 bg-blue-500 text-white py-3 rounded-md font-semibold hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={!isInStock} // Disable nếu hết hàng
+              disabled={!isInStock || addingToCart} // Disable nếu hết hàng hoặc đang thêm vào giỏ
             >
-              Thêm vào giỏ
+              {addingToCart ? "Đang thêm..." : "Thêm vào giỏ"}
             </button>
             <button
               className="flex-1 border border-blue-500 text-blue-500 py-3 rounded-md font-semibold hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={!isInStock} // Disable nếu hết hàng
+              disabled={!isInStock || addingToCart} // Disable nếu hết hàng hoặc đang thêm vào giỏ
             >
               Mua ngay
             </button>
@@ -355,7 +395,9 @@ const ProductDetailPage = () => {
           {/* Store Availability */}
           <div className="flex items-center text-gray-700 mb-6">
             <i className="ri-store-line mr-2"></i>
-            <p>Có {selectedVariant?.stock} sản phẩm có sẵn tại cửa hàng.</p>
+            <p>
+              Có {selectedVariant?.stock} sản phẩm có sẵn tại cửa hàng.
+            </p>
             <i className="ri-add-line ml-auto cursor-pointer"></i>
           </div>
 

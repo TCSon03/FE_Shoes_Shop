@@ -2,7 +2,9 @@ import { z } from "zod";
 
 export const orderValidation = z.object({
   phoneNumber: z.string().min(10, "Số điện thoại không hợp lệ"),
-  paymentMethod: z.enum(["COD", "VNPAY"]),
+  paymentMethod: z.enum(["COD", "Online"], {
+    errorMap: () => ({ message: "Phương thức thanh toán không hợp lệ." }),
+  }),
   notes: z.string().optional(),
   shippingAddress: z.object({
     street: z.string().min(1, "Bắt buộc"),
@@ -15,7 +17,7 @@ export const orderValidation = z.object({
 export const orderStatusSchema = z
   .object({
     status: z.enum([
-      "pendding",
+      "pending",
       "processing",
       "shipped",
       "delivered",

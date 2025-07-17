@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 const HeaderClientPage = () => {
@@ -42,7 +41,7 @@ const HeaderClientPage = () => {
               className="relative group text-gray-700 hover:text-blue-600 transition-colors duration-300"
               to="/product"
             >
-              Product
+              Shop
               <span className="absolute bottom-[-26px] left-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full group-hover:bg-blue-600"></span>
             </Link>
           </li>

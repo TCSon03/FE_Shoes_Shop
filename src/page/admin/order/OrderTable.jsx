@@ -33,7 +33,6 @@ const AdminOrderListPage = () => {
 
   const totalPages = Math.ceil(total / limit);
 
-  // Handlers for pagination (to match the brand component's naming)
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -134,6 +133,9 @@ const AdminOrderListPage = () => {
                   Tổng giá
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Thanh toán
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Hành động
                 </th>
               </tr>
@@ -172,35 +174,7 @@ const AdminOrderListPage = () => {
                       })}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                          ${
-                            order.status === "Pending"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : ""
-                          }
-                          ${
-                            order.status === "Delivered"
-                              ? "bg-green-100 text-green-800"
-                              : ""
-                          }
-                          ${
-                            order.status === "Cancelled"
-                              ? "bg-red-100 text-red-800"
-                              : ""
-                          }
-                          ${
-                            order.status === "Processing"
-                              ? "bg-blue-100 text-blue-800"
-                              : ""
-                          }
-                          ${
-                            order.status === "Confirmed"
-                              ? "bg-purple-100 text-purple-800"
-                              : ""
-                          }
-                        `}
-                      >
+                      <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full">
                         {order.status}
                       </span>
                     </td>
@@ -210,17 +184,20 @@ const AdminOrderListPage = () => {
                         currency: "VND",
                       })}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full">
+                        {order.paymentMethod}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 flex space-x-2">
                       <button
                         title="Xem chi tiết"
-                        // onClick={() => handleViewOrder(order._id)} // Add your view handler here
                         className="px-3 py-2 rounded-full text-blue-600 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
                       >
                         <i className="ri-eye-fill text-lg"></i>
                       </button>
                       <button
                         title="Cập nhật"
-                        // onClick={() => handleUpdateOrder(order._id)} // Add your update handler here
                         className="px-3 py-2 rounded-full text-yellow-600 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
                       >
                         <Link to={`/admin/order/${order._id}/status`}>

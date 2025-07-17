@@ -6,6 +6,7 @@ import { orderValidation } from "../../../validation/order/orderSchema";
 import { getCart } from "../../../services/cartApi";
 import { toast } from "react-toastify";
 import { createOrder } from "../../../services/orderApi";
+import { createVnpayPaymentUrl } from "../../../services/paymentApi";
 
 const CheckoutPage = () => {
   const [cart, setCart] = useState(null);
@@ -15,6 +16,7 @@ const CheckoutPage = () => {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm({
     resolver: zodResolver(orderValidation),
     defaultValues: {
@@ -30,6 +32,8 @@ const CheckoutPage = () => {
     },
   });
 
+  const paymentMethod = watch("paymentMethod");
+
   useEffect(() => {
     getCart()
       .then((res) => setCart(res.data.cart))
@@ -38,11 +42,29 @@ const CheckoutPage = () => {
 
   const onSubmit = async (data) => {
     try {
-      await createOrder(data);
-      toast.success("Đặt hàng thành công!");
-      navigate("/order");
+      const orderResponse = await createOrder(data);
+      const { orderId, totalAmount, paymentMethod } = orderResponse.data;
+
+      if (paymentMethod === "Online") {
+        const vnpayData = {
+          orderId: orderId,
+          amount: totalAmount,
+          bankCode: "",
+          language: "vn",
+        };
+        const vnpayResponse = await createVnpayPaymentUrl(vnpayData);
+        const vnpUrl = vnpayResponse.data.vnpUrl;
+
+        window.location.href = vnpUrl;
+      } else if (paymentMethod === "COD") {
+        toast.success("Đặt hàng thành công!");
+        navigate(`/order`);
+      }
+      // }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Lỗi khi đặt hàng");
+      console.error("Lỗi đặt hàng hoặc thanh toán:", err);
+      const errorMessage = err.response?.data?.message || "Lỗi khi đặt hàng";
+      toast.error(errorMessage);
     }
   };
 
@@ -234,20 +256,7 @@ const CheckoutPage = () => {
             {/* Phương thức thanh toán */}
             <div>
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 mr-2 text-gray-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 10h18M7 15h10M4 4h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"
-                  />
-                </svg>
+                {/* ... (SVG icon) ... */}
                 Phương thức thanh toán
               </h2>
               <div className="space-y-4">
@@ -257,7 +266,7 @@ const CheckoutPage = () => {
                     value="COD"
                     {...register("paymentMethod")}
                     className="form-radio h-5 w-5 text-blue-600"
-                    defaultChecked /* Set COD as default based on image */
+                    // defaultChecked // Bỏ defaultChecked nếu muốn có lựa chọn mặc định qua useForm
                   />
                   <span className="ml-3">
                     <span className="block text-base font-medium text-gray-900">
@@ -271,20 +280,19 @@ const CheckoutPage = () => {
                 <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition duration-150 ease-in-out">
                   <input
                     type="radio"
-                    value="Online" /* Đổi VNPAY thành Online để khớp với enum của model */
+                    value="Online" // Giá trị này phải khớp với enum trong Order model của backend
                     {...register("paymentMethod")}
                     className="form-radio h-5 w-5 text-blue-600"
                   />
                   <span className="ml-3">
                     <span className="block text-base font-medium text-gray-900">
-                      Thanh toán online
+                      Thanh toán online (VNPAY)
                     </span>
                     <span className="block text-sm text-gray-500">
-                      Thanh toán qua thẻ tín dụng, ví điện tử
+                      Thanh toán qua VNPAY, thẻ tín dụng, ví điện tử
                     </span>
                   </span>
                 </label>
-                {/* Nếu có lỗi cho paymentMethod */}
                 {errors.paymentMethod && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.paymentMethod.message}
@@ -399,7 +407,9 @@ const CheckoutPage = () => {
                 onClick={handleSubmit(onSubmit)} /* Gắn onSubmit vào button */
                 className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               >
-                Đặt hàng
+                {paymentMethod === "Online"
+                  ? "Thanh toán qua VNPAY"
+                  : "Đặt hàng"}
               </button>
               <p className="text-xs text-gray-500 mt-3 text-center">
                 Bằng việc đặt hàng, bạn đồng ý với{" "}

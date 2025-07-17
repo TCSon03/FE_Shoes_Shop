@@ -12,6 +12,8 @@ import OrderDetailPage from "../page/client/profile/OrderDetailPage";
 import CartPage from './../page/client/cart/CartPage';
 import CheckoutPage from "../page/client/checkout/CheckoutPage";
 import OrderListPage from "../page/client/checkout/OrderListPage";
+import PaymentSuccess from "../page/client/payment/PaymentSuccess";
+import PaymentFail from "../page/client/payment/PaymentFail";
 const clientRoutes = [
   // Common routes
   { index: true, element: <HomePage /> },
@@ -33,6 +35,11 @@ const clientRoutes = [
 
   // Cart routes
   { path: "/cart", element: <CartPage /> },
+
+  // Payment
+  { path: "/payment-success", element: <PaymentSuccess /> },
+  { path: "/payment-fail", element: <PaymentFail /> },
+
 
   //   user routes
   { path: "/profile/me/:id", element: <ProfilePage /> },

@@ -5,6 +5,7 @@ import {
   removeCartItem,
   updateCartItemQuantity,
 } from "./../../../services/cartApi";
+import { Link } from "react-router-dom";
 
 const CartPage = () => {
   const [cart, setCart] = useState(null);
@@ -268,7 +269,7 @@ const CartPage = () => {
             Continue Shopping
           </button>
           <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-md font-medium text-base transition-colors duration-200 shadow">
-            Check Out
+            <Link to={`/checkout`}>Check Out</Link>
           </button>
         </div>
       </div>

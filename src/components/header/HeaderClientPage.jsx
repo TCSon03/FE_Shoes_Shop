@@ -64,6 +64,15 @@ const HeaderClientPage = () => {
               <span className="absolute bottom-[-26px] left-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full group-hover:bg-blue-600"></span>
             </Link>
           </li>
+          <li>
+            <Link
+              className="relative group text-gray-700 hover:text-blue-600 transition-colors duration-300"
+              to="/order"
+            >
+              Order
+              <span className="absolute bottom-[-26px] left-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full group-hover:bg-blue-600"></span>
+            </Link>
+          </li>
         </ul>
         <Link to="/" className="flex items-center gap-1">
           <p className="bg-orange-400 rounded-full px-3 py-2 font-semibold text-white">

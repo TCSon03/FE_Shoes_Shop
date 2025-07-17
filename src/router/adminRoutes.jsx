@@ -1,7 +1,5 @@
 import DashboardPage from "../page/admin/dashboard/DashboardPage";
 import ProductTablePage from "../page/admin/product/ProductTablePage";
-import SettingPage from "./../page/admin/setting/SettingPage";
-import ProductFormPage from "./../page/admin/product/ProductFormPage";
 import CategoryTable from "./../page/admin/category/CategoryTable";
 import CategoryForm from "./../page/admin/category/CategoryForm";
 import BlogTable from "../page/admin/blog/BlogTable";
@@ -20,6 +18,7 @@ import ProductTableSoft from "../page/admin/product/ProductTableSoft";
 import VariantFormPage from "../page/admin/variant/VariantFormPage";
 import VariantTablePage from "../page/admin/variant/VariantTablePage";
 import VariantEditPage from "../page/admin/variant/VariantEditPage";
+import OrderEdit from "../page/admin/order/OrderEdit";
 
 const adminRoutes = [
   // Common routes
@@ -52,6 +51,7 @@ const adminRoutes = [
   // Order routes
   { path: "/admin/order", element: <OrderTable /> },
   { path: "/admin/order/:id", element: <OrderForm /> },
+  { path: "/admin/order/:orderId/status", element: <OrderEdit /> },
 
   // User
   { path: "/admin/user", element: <UserListPage /> },

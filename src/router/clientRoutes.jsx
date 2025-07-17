@@ -10,6 +10,8 @@ import ProfilePage from "./../page/client/profile/ProfilePage";
 import OrderPage from "../page/client/profile/OrderPage";
 import OrderDetailPage from "../page/client/profile/OrderDetailPage";
 import CartPage from './../page/client/cart/CartPage';
+import CheckoutPage from "../page/client/checkout/CheckoutPage";
+import OrderListPage from "../page/client/checkout/OrderListPage";
 const clientRoutes = [
   // Common routes
   { index: true, element: <HomePage /> },
@@ -24,6 +26,10 @@ const clientRoutes = [
   { path: "/product", element: <ProductPage /> },
   { path: "/product/:id", element: <ProductDetailPage /> },
   { path: "/category", element: <CategoryPage /> },
+
+  { path: "/checkout", element: <CheckoutPage /> },
+  { path: "/order", element: <OrderListPage /> },
+
 
   // Cart routes
   { path: "/cart", element: <CartPage /> },
